@@ -1,0 +1,26 @@
+{
+  "station_id": "8723970",
+  "begin_date": "20250730",
+  "end_date": "20250813",
+  "datum": "MHHW",
+  "minor_flood_threshold_m": 1.584,
+  "sources": {
+    "water_level_api": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=ccir-final&begin_date=20250730&end_date=20250813&datum=MHHW&station=8723970&time_zone=gmt&units=metric&interval=h&format=json",
+    "predictions_api": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=ccir-final&begin_date=20250730&end_date=20250813&datum=MHHW&station=8723970&time_zone=gmt&units=metric&interval=h&format=json",
+    "floodlevels_mdapi": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/8723970/floodlevels.json?units=metric",
+    "elevation_api": "https://api.open-elevation.com/api/v1/lookup"
+  },
+  "split": {
+    "method": "temporal_ratio",
+    "ratio": 0.7,
+    "test_start_gmt": "2025-08-10T13:00:00"
+  },
+  "artifacts": {
+    "hourly_train_csv": "data/noaa_8723970_20250730_20250813_hourly_train.csv",
+    "hourly_test_csv": "data/noaa_8723970_20250730_20250813_hourly_test.csv",
+    "baseline_metrics_json": "data/noaa_8723970_20250730_20250813_baseline_metrics.json"
+  },
+  "station_name": "Vaca Key, Florida Bay",
+  "station_lat": 24.711,
+  "station_lon": -81.1065
+}

@@ -1,0 +1,25 @@
+{
+  "station_id": "8722670",
+  "begin_date": "20250730",
+  "end_date": "20250813",
+  "datum": "MHHW",
+  "minor_flood_threshold_m": 10.612,
+  "sources": {
+    "water_level_api": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=ccir-final&begin_date=20250730&end_date=20250813&datum=MHHW&station=8722670&time_zone=gmt&units=metric&interval=h&format=json",
+    "predictions_api": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=ccir-final&begin_date=20250730&end_date=20250813&datum=MHHW&station=8722670&time_zone=gmt&units=metric&interval=h&format=json",
+    "floodlevels_mdapi": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/8722670/floodlevels.json?units=metric"
+  },
+  "split": {
+    "method": "temporal_ratio",
+    "ratio": 0.7,
+    "test_start_gmt": "2025-08-09T11:00:00"
+  },
+  "artifacts": {
+    "hourly_train_csv": "data/noaa_8722670_20250730_20250813_hourly_train.csv",
+    "hourly_test_csv": "data/noaa_8722670_20250730_20250813_hourly_test.csv",
+    "baseline_metrics_json": "data/noaa_8722670_20250730_20250813_baseline_metrics.json"
+  },
+  "station_name": "Lake Worth Pier, Atlantic Ocean",
+  "station_lat": 26.612778,
+  "station_lon": -80.034164
+}
