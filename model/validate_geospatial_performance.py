@@ -13,7 +13,8 @@ parser.add_argument("--model", required=True)
 parser.add_argument("--data", required=True)
 args = parser.parse_args()
 
-station = Path(args.model).stem.split("_")[-1]
+station = Path(args.data).stem
+station = station.split("_")[1]
 df = pd.read_csv(args.data)
 df["time_gmt"] = pd.to_datetime(df["time_gmt"])
 df = df.sort_values("time_gmt").reset_index(drop=True)
@@ -77,7 +78,7 @@ df["low_elev_pct"] = low_elev_pct
 df["flood_prone_area"] = flood_prone_area
 df["road_density"] = road_density
 
-features = ["predicted_m", "rate_of_change_m", "residual_lag1", "residual_lag2", "month", "hour", "dayofweek", "tide_phase", "season", "elev_mean", "elev_std", "elev_min", "elev_max", "elev_range", "station_elev", "slope_mean", "slope_std", "aspect_mean", "low_elev_pct", "flood_prone_area", "road_density"]
+features = ["predicted_m", "rate_of_change_m", "residual_lag1", "residual_lag2", "month", "hour", "dayofweek", "tide_phase", "season", "elev_mean", "elev_std", "elev_min", "elev_max", "elev_range", "station_elev", "slope_mean", "slope_std", "aspect_mean", "low_elev_pct", "flood_prone_area"]
 model = xgb.XGBRegressor()
 model.load_model(args.model)
 df["predicted_residual"] = model.predict(df[features])
@@ -94,3 +95,11 @@ data_name = Path(args.data).stem
 plot_path = f"performances/validation_{model_name}_on_{data_name}.png"
 fig.savefig(plot_path, bbox_inches="tight")
 print(f"Saved plot to {plot_path}")
+
+fig2, ax2 = plt.subplots(figsize=(12, 6))
+ax2.plot(df["time_gmt"], df["observed_m"], label="observed_m")
+ax2.plot(df["time_gmt"], df["predicted_m"], label="predicted_m")
+ax2.legend(); ax2.grid(True); fig2.autofmt_xdate()
+plot_path2 = f"performances/validation_{model_name}_on_{data_name}_baseline.png"
+fig2.savefig(plot_path2, bbox_inches="tight")
+print(f"Saved plot to {plot_path2}")
