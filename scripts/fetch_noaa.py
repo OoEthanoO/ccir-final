@@ -1,20 +1,36 @@
 import requests
 import pandas as pd
+import argparse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import json
 import time
 
-station = "9410170"
-# end = datetime.now(timezone.utc)
-# custom date
-year = 2015
-month = 11
-day = 27
-end = datetime(year, month, day, tzinfo=timezone.utc)
-start = end - timedelta(days=14)
-begin_date = start.strftime("%Y%m%d")
-end_date = end.strftime("%Y%m%d")
+# station = "9410170"
+# # end = datetime.now(timezone.utc)
+# # custom date
+# year = 2015
+# month = 11
+# day = 27
+# end = datetime(year, month, day, tzinfo=timezone.utc)
+# start = end - timedelta(days=14)
+# begin_date = start.strftime("%Y%m%d")
+# end_date = end.strftime("%Y%m%d")
+parser = argparse.ArgumentParser(description="Fetch and process NOAA tide data")
+parser.add_argument("--station", default="9410170", help="NOAA station ID")
+parser.add_argument("--days", type=int, default=14, help="lookback window in days")
+parser.add_argument("--begin_date", help="start date (YYYYMMDD)")
+parser.add_argument("--end_date", help="end date (YYYYMMDD)")
+args = parser.parse_args()
+
+station = args.station
+if args.begin_date and args.end_date:
+    begin_date, end_date = args.begin_date, args.end_date
+else:
+    now = datetime.now(timezone.utc)
+    begin_date = (now - timedelta(days=args.days)).strftime("%Y%m%d")
+    end_date = now.strftime("%Y%m%d")
+
 base = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
 
 def get_json(params):
@@ -354,6 +370,25 @@ hmax = float(hourly_df["water_level_above_threshold_m"].max() or 0.0)
 osm_csv = Path("data") / f"osm_{station}_2km_streets.csv"
 if osm_csv.exists():
     streets = pd.read_csv(osm_csv)
+
+    import json, math
+    def calc_slope(g, e):
+        coords = json.loads(g)["coordinates"]
+        L = sum(
+            math.hypot(
+                (b[0] - a[0]) * 111320 * math.cos(math.radians(a[1])),
+                (b[1] - a[1]) * 111320
+            )
+            for a, b in zip(coords, coords[1:])
+        )
+        return (e / L) if L else 0
+
+    streets["slope"] = [
+        calc_slope(g, el) for g, el in zip(streets.geometry, streets.elevation_m)
+    ]
+    streets.to_csv(osm_csv, index=False)
+    print(f"Wrote {osm_csv} with slope")
+
     em = pd.to_numeric(streets.get("elevation_m"), errors="coerce").fillna(0.0)
     dist = pd.to_numeric(streets.get("distance_to_coastline_m"), errors="coerce").fillna(0.0)
     weight = 1.0 / (1.0 + dist / 500.0)

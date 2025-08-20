@@ -1,0 +1,25 @@
+{
+  "station_id": "9410170",
+  "begin_date": "20250816",
+  "end_date": "20250915",
+  "datum": "MHHW",
+  "minor_flood_threshold_m": 0.5700000000000003,
+  "sources": {
+    "water_level_api": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=ccir-final&begin_date=20250816&end_date=20250915&datum=MHHW&station=9410170&time_zone=gmt&units=metric&interval=h&format=json",
+    "predictions_api": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=ccir-final&begin_date=20250816&end_date=20250915&datum=MHHW&station=9410170&time_zone=gmt&units=metric&interval=h&format=json",
+    "floodlevels_mdapi": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/9410170/floodlevels.json?units=metric"
+  },
+  "split": {
+    "method": "temporal_ratio",
+    "ratio": 0.7,
+    "test_start_gmt": "2025-08-16T02:00:00"
+  },
+  "artifacts": {
+    "hourly_train_csv": "data/noaa_9410170_20250816_20250915_hourly_train.csv",
+    "hourly_test_csv": "data/noaa_9410170_20250816_20250915_hourly_test.csv",
+    "baseline_metrics_json": "data/noaa_9410170_20250816_20250915_baseline_metrics.json"
+  },
+  "station_name": "San Diego",
+  "station_lat": 32.715557,
+  "station_lon": -117.17667
+}
