@@ -15,12 +15,17 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument("--stations", nargs='+', default=["9410170"])
 parser.add_argument("--days", type=int, default=14)
+parser.add_argument("--end_date", default=None, help="End date in YYYYMMDD format")
 args = parser.parse_args()
 
 now = datetime.now(timezone.utc)
-start = now - timedelta(days=args.days)
-begin_date = start.strftime("%Y%m%d")
-end_date = now.strftime("%Y%m%d")
+if args.end_date:
+    end_dt = datetime.strptime(args.end_date, "%Y%m%d").replace(tzinfo=timezone.utc)
+    end_date = args.end_date
+else:
+    end_dt = now
+    end_date = now.strftime("%Y%m%d")
+begin_date = (end_dt - timedelta(days=args.days)).strftime("%Y%m%d")
 
 dfs = []
 for station in args.stations:
@@ -145,12 +150,12 @@ r2 = r2_score(y_test, preds)
 print(f"XGBoost RMSE: {rmse:.4f}, R2: {r2:.4f}")
 
 combined_station = '_'.join(sorted(args.stations))
-model_path = f"models/xgb_residual_{combined_station}.json"
+model_path = f"models/xgb_residual_{combined_station}_{begin_date}_{end_date}.json"
 best_model.save_model(model_path)
 print(f"Saved model to {model_path}")
 
 xgb.plot_importance(best_model)
 plt.title("XGBoost Feature Importance")
-fi_path = f"data/feature_importance_{combined_station}.png"
+fi_path = f"data/feature_importance_{combined_station}_{begin_date}_{end_date}.png"
 plt.savefig(fi_path, bbox_inches="tight")
 print(f"Saved feature importance to {fi_path}")
